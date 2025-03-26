@@ -90,31 +90,34 @@ def map_draw():
                 cell.left = cell.width * j
                 cell.top = cell.height * i
                 cell.draw()
+                      
             elif my_map[i][j] == 1:
                 cell1.left = cell.width * j
                 cell1.top = cell.height * i
                 cell1.draw()
+                      
             elif my_map[i][j] == 2:
                 cell2.left = cell.width * j
                 cell2.top = cell.height * i
                 cell2.draw()
+                      
             elif my_map[i][j] == 3:
                 cell3.left = cell.width * j
                 cell3.top = cell.height * i
                 cell3.draw()
 
-            # Отрисовка
-
-
 def draw():
+    """Отрисовка"""
     if mode in modes_game:
         screen.fill("#2f3542")
         map_draw()
         char.draw()
+              
         screen.draw.text("HP:", center=(25, 475), color='white', fontsize=20)
         screen.draw.text(str(char.health), center=(75, 475), color='white', fontsize=20)
         screen.draw.text("AP:", center=(375, 475), color='white', fontsize=20)
         screen.draw.text(str(char.attack), center=(425, 475), color='white', fontsize=20)
+              
         for i in range(len(enemies)):
             enemies[i].draw()
             # Отрисовка здоровья врага
@@ -123,12 +126,15 @@ def draw():
         # отрисовка бонусов
         for i in range(len(hearts)):
             hearts[i].draw()
+                  
         for i in range(len(swords)):
             swords[i].draw()
+                  
     # Окно победы или поражения
     elif mode == "win":
         screen.fill("white")
         win_fon.draw()
+              
     elif mode == 'defeat':
         screen.fill('white')
         defeat.draw()
@@ -137,18 +143,24 @@ def draw():
 # Управление
 def on_key_down(key):
     global colli, enemies, hearts, swords, mode, win
+          
     old_x = char.x
     old_y = char.y
+          
     if key == keys.D and char.x + cell.width < WIDTH - cell.width:
         char.x += cell.width
         char.image = 'stand'
+              
     elif key == keys.A and char.x - cell.width > cell.width:
         char.x -= cell.width
         char.image = 'left'
+              
     elif key == keys.S and char.y + cell.height < HEIGHT - cell.height * 2:
         char.y += cell.height
+              
     elif key == keys.W and char.y - cell.height > cell.height:
         char.y -= cell.height
+              
     elif key == keys.RETURN and mode != 'game':
         enemies = []
         new_enemies(5, (15, 20), (5, 5))
@@ -160,19 +172,23 @@ def on_key_down(key):
 
     # Столкновение с врагами
     enemy_index = char.collidelist(enemies)
+          
     if enemy_index != -1:
         char.x = old_x
         char.y = old_y
         colli = 1
         enemy = enemies[enemy_index]
         enemy.health -= char.attack
+              
         if enemy.health <= 0:
             enemies.pop(enemy_index)
+                  
             # Добавление бонусов
             if enemy.bonus == 1:
                 heart = Actor('heart')
                 heart.pos = enemy.pos
                 hearts.append(heart)
+                      
             if win < 3:
                 if enemy.bonus == 2:
                     sword = Actor('sword')
@@ -187,21 +203,27 @@ def on_key_down(key):
 # Логика победы или поражения
 def victory():
     global mode, win
+          
     if enemies == [] and char.health > 0 and (mode != 'defeat' and mode != 'win'):
         if win == 1:
             mode = "level_2"
             new_enemies(6, (20, 25), (5, 10))
+                  
         elif win == 2:
             mode = 'level_3'
             new_enemies(7, (25, 30), (10, 15))
+                  
         elif win == 3:
             mode = 'level_4'
             new_enemies(8, (30, 35), (15, 20))
+                  
         elif win == 4:
             mode = 'level_5'
             new_enemies(9, (35, 40), (20, 25))
+                  
         win += 1
         char.health = 100
+              
         if win == 5:
             mode = "win"
     if char.health <= 0:
